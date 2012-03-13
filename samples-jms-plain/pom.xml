@@ -1,0 +1,21 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>samples</artifactId>
+    <groupId>stephansun.github.samples</groupId>
+    <version>1.0.0.RC1</version>
+    <relativePath>..</relativePath>
+  </parent>
+  <artifactId>samples-jms-plain</artifactId>
+  <name>samples-jms-plain</name>
+  <description>samples-jms-plain</description>
+  
+  <dependencies>
+  	<dependency>
+		<groupId>org.apache.activemq</groupId>
+		<artifactId>activemq-all</artifactId>
+		<version>5.3.0</version>
+  	</dependency>
+  </dependencies>
+  
+</project>
