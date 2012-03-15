@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-3.1.xsd
+		http://www.springframework.org/schema/rabbit 
+		http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<bean id="textMessageContentListener"
+		class="stephansun.github.samples.amqp.spring.listeneradapter.TextMessageContentListener"/>
+		
+	<rabbit:listener-container connection-factory="connectionFactory">
+		<rabbit:listener ref="textMessageContentListener" queues="myqueue" method="handleMessage"/>
+	</rabbit:listener-container>
+	
+	<!-- Infrastructure -->
+	
+	<rabbit:connection-factory id="connectionFactory"/>
+	
+	<rabbit:template id="rabbitTemplate" connection-factory="connectionFactory"/>
+	
+	<rabbit:admin connection-factory="connectionFactory"/>
+
+	<!-- 
+	<util:map id="queue-arguments-default" map-class="java.util.HashMap">
+		<entry key="x-message-ttl" value="5000"/>
+	</util:map>
+	-->
+	
+	<rabbit:queue name="myqueue"
+		durable="true"
+		exclusive="false"
+		auto-delete="false">
+		<rabbit:queue-arguments>
+			<entry key="x-message-ttl" value="5000"/>
+		</rabbit:queue-arguments>
+	</rabbit:queue>
+		
+</beans>

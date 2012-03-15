@@ -19,7 +19,7 @@ public class Worker {
 		Connection connection = factory.newConnection();
 		Channel channel = connection.createChannel();
 		
-		channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+		channel.queueDeclare(QUEUE_NAME, true, false, false, null);
 		System.out.println("CRTL+C");
 		
 		// 这条语句告诉RabbitMQ在同一时间不要给一个worker一个以上的消息。
@@ -39,6 +39,7 @@ public class Worker {
 			doWord(message);
 			System.out.println("r[done]");
 			// 发出通知标志
+System.out.println(delivery.getEnvelope().getDeliveryTag());
 			channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 		}
 	}
