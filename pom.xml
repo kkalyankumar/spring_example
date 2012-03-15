@@ -61,5 +61,6 @@
   	<module>samples-amqp-plain</module>
   	<module>samples-amqp-spring</module>
   	<module>samples-amqp-spring-remoting</module>
+  	<module>samples-web</module>
   </modules>
 </project>
