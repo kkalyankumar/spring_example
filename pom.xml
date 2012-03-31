@@ -63,5 +63,6 @@
   	<module>samples-amqp-spring-remoting</module>
   	<module>samples-web</module>
   	<module>samples-hibernate</module>
+  	<module>samples-shiro</module>
   </modules>
 </project>
