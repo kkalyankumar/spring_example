@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-3.1.xsd
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager"/>
+		<!-- override these for application-specific URLs if you like: -->
+    	<property name="loginUrl" value="/login"/>
+    	<property name="successUrl" value="/home"/>
+    	<property name="unauthorizedUrl" value="/unauthorized"/>
+    	<!-- The 'filters' property is not necessary since any declared javax.servlet.Filter bean  -->
+    	<!-- defined will be automatically acquired and available via its beanName in chain        -->
+    	<!-- definitions, but you can perform instance overrides or name aliases here if you like: -->
+    	<!-- <property name="filters">
+        <util:map>
+            <entry key="anAlias" value-ref="someFilter"/>
+        </util:map>
+    	</property> -->
+    	<property name="filterChainDefinitions">
+    		<value>
+    			# some example chain definitions:
+            	/admin/** = authc, roles[admin]
+            	/docs/** = authc, perms[document:read]
+            	/** = authc
+            	# more URL-to-FilterChain definitions here
+    		</value>
+    	</property>
+	</bean>
+	
+	<!-- Define any javax.servlet.Filter beans you want anywhere in this application context.   -->
+	<!-- They will automatically be acquired by the 'shiroFilter' bean above and made available -->
+	<!-- to the 'filterChainDefinitions' property.  Or you can manually/explicitly add them     -->
+	<!-- to the shiroFilter's 'filters' Map if desired. See its JavaDoc for more details.       -->
+	<bean id="someFilter" class="com.springsource.greenhouse.custom.filter.SomeFilter"/>
+	<bean id="anotherFilter" class="com.springsource.greenhouse.custom.filter.AnotherFilter"></bean>
+	
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<!-- Single realm app.  If you have multiple realms, use the 'realms' property instead. -->
+		<property name="realm" ref="myRealm"/>
+		<!-- By default the servlet container sessions will be used.  Uncomment this line
+         	to use shiro's native sessions (see the JavaDoc for more): -->
+     	<property name="sessionMode" value="native"/>
+     	<property name="sessionManager" ref="sessionManager"/>
+	</bean>
+	<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+		<property name="sessionDAO" ref="sessionDAO"/>
+	</bean>
+	<bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO"/>
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+	
+	<!-- Define the Shiro Realm implementation you want to use to connect to your back-end -->
+	<!-- security datasource: -->
+	<bean id="myRealm" class="org.apache.shiro.realm.jdbc.JdbcRealm">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<!-- Enable Shiro Annotations for Spring-configured beans.  Only run after -->
+	<!-- the lifecycleBeanProcessor has run: -->
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" 
+		depends-on="lifecycleBeanPostProcessor"/>
+	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager"/>
+	</bean>
+		
+</beans>
